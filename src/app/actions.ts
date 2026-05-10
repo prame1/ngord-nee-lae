@@ -3,9 +3,9 @@
 import { getAllDraws, getTopFrequentNumbers, searchNumberInDraws, getDrawsByYear, getLatestDraw, SearchResult, Draw, RankedFrequencies } from '@/lib/lotto';
 import { getPopularDreams, DreamArticle } from '@/lib/beliefs';
 
-export async function handleSearch(number: string): Promise<SearchResult[]> {
+export async function handleSearch(number: string, allowedPrizeIds?: string[]): Promise<SearchResult[]> {
   const allDraws = getAllDraws();
-  return searchNumberInDraws(number, allDraws);
+  return searchNumberInDraws(number, allDraws, allowedPrizeIds);
 }
 
 export async function fetchFrequencyData(startYear?: number, endYear?: number): Promise<RankedFrequencies> {

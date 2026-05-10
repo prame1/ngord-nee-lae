@@ -19,15 +19,20 @@ export default function RandomPage() {
     await new Promise(r => setTimeout(r, 2500));
 
     let finalNum = "";
+    let allowedPrizeIds: string[] | undefined = undefined;
+
     if (digitMode === '2') {
       finalNum = Math.floor(Math.random() * 100).toString().padStart(2, '0');
+      allowedPrizeIds = ['runningNumberBackTwo'];
     } else if (digitMode === '3') {
       finalNum = Math.floor(Math.random() * 1000).toString().padStart(3, '0');
+      allowedPrizeIds = ['runningNumberFrontThree', 'runningNumberBackThree'];
     } else {
       finalNum = Math.floor(Math.random() * 1000000).toString().padStart(6, '0');
+      allowedPrizeIds = ['prizeFirst'];
     }
 
-    const stats = await handleSearch(finalNum);
+    const stats = await handleSearch(finalNum, allowedPrizeIds);
     setResult({ num: finalNum, stats });
     setIsSpinning(false);
   };

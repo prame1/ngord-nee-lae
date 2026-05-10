@@ -48,13 +48,14 @@ export function getDrawsByYear(year: string): Draw[] {
   }
 }
 
-export function searchNumberInDraws(query: string, draws: Draw[]): SearchResult[] {
+export function searchNumberInDraws(query: string, draws: Draw[], allowedPrizeIds?: string[]): SearchResult[] {
   if (!query) return [];
   const results: SearchResult[] = [];
 
   for (const draw of draws) {
     // Check main prizes
     for (const prize of draw.prizes) {
+      if (allowedPrizeIds && !allowedPrizeIds.includes(prize.id)) continue;
       for (const num of prize.number) {
         if (num.includes(query)) {
           results.push({
@@ -70,6 +71,7 @@ export function searchNumberInDraws(query: string, draws: Draw[]): SearchResult[
     // Check running numbers (2-digit, 3-digit suffixes)
     if (draw.runningNumbers) {
       for (const prize of draw.runningNumbers) {
+        if (allowedPrizeIds && !allowedPrizeIds.includes(prize.id)) continue;
         for (const num of prize.number) {
           if (num.includes(query)) {
             results.push({
