@@ -1,0 +1,15 @@
+<svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Rounded Rect for Ticket/Card Shape -->
+  <rect x="2" y="6" width="28" height="20" rx="4" fill="#2563eb" />
+  <!-- Top notch -->
+  <circle cx="16" cy="6" r="3" fill="#f8fafc" />
+  <!-- Bottom notch -->
+  <circle cx="16" cy="26" r="3" fill="#f8fafc" />
+  <!-- Pixel-like dots/numbers -->
+  <rect x="6" y="12" width="4" height="4" fill="white" />
+  <rect x="12" y="12" width="4" height="4" fill="white" opacity="0.6" />
+  <rect x="18" y="12" width="4" height="4" fill="white" />
+  <rect x="24" y="12" width="4" height="4" fill="white" opacity="0.8" />
+  <!-- Star/Sparkle for Luck -->
+  <path d="M26 4L27 7L30 8L27 9L26 12L25 9L22 8L25 7L26 4Z" fill="#fbbf24" />
+</svg>

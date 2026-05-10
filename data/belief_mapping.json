@@ -1,0 +1,28 @@
+{
+  "categories": [
+    {
+      "name": "สัตว์ (Animals)",
+      "subcategories": [
+        { "name": "งู (Snake)", "numbers": [5, 6, 8, 56, 86, 58] },
+        { "name": "แมว (Cat)", "numbers": [1, 4, 7, 14, 47, 71] },
+        { "name": "เสือ (Tiger)", "numbers": [3, 0, 30, 03] },
+        { "name": "ปลา (Fish)", "numbers": [8, 2, 82, 28] }
+      ]
+    },
+    {
+      "name": "สิ่งของ (Objects)",
+      "subcategories": [
+        { "name": "แหวน (Ring)", "numbers": [0, 9, 09, 90] },
+        { "name": "พัดลม (Fan)", "numbers": [8, 1, 81, 18] },
+        { "name": "บ้าน (House)", "numbers": [9, 6, 96, 69, 19, 16] }
+      ]
+    },
+    {
+      "name": "เหตุการณ์ (Events)",
+      "subcategories": [
+        { "name": "ไฟไหม้ (Fire)", "numbers": [7, 4, 74, 47] },
+        { "name": "งานแต่ง (Wedding)", "numbers": [2, 6, 26, 62] }
+      ]
+    }
+  ]
+}
