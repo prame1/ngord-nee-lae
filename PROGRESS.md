@@ -20,3 +20,4 @@ This file tracks the history of changes and tasks performed by AI agents to main
 | 2024-05-09 | Gemini CLI | Consolidated Event Calendar | ✅ Done | Merged Significant Dates and Calendar into a single analytics page with month/year filters and automated hit highlighting. |
 | 2024-05-09 | Gemini CLI | Remove Significant Events | ✅ Done | Removed the "เลขวันสำคัญ" feature and consolidated logic based on user feedback to simplify the site. |
 | 2024-05-09 | Gemini CLI | Final UI Polish & Disclaimer | ✅ Done | Enhanced Dream UI with larger numbers, simplified statistical analysis, and added a proper global footer with disclaimers. |
+| 2024-05-10 | Gemini CLI | Animations & Custom Cursor | 🛠️ Testing | Added subtle animated background blobs and a custom interactive cursor for a premium feel. |

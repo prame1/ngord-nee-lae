@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { Inter, JetBrains_Mono } from "next/font/google";
 import Link from "next/link";
 import "./globals.css";
+import AnimatedBackground from "@/components/AnimatedBackground";
+import CustomCursor from "@/components/CustomCursor";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -28,7 +30,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="th" className={`${inter.variable} ${jetbrainsMono.variable}`} suppressHydrationWarning>
-      <body className="antialiased min-h-screen bg-slate-50 flex flex-col" suppressHydrationWarning>
+      <body className="antialiased min-h-screen bg-slate-50 flex flex-col relative" suppressHydrationWarning>
+        <AnimatedBackground />
+        <CustomCursor />
+        
         {/* Navigation Bar */}
         <nav className="sticky top-0 z-50 w-full bg-white/80 backdrop-blur-md border-b border-slate-200">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

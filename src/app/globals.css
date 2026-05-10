@@ -23,6 +23,16 @@ body {
   @apply max-w-5xl mx-auto px-4 sm:px-6 lg:px-8;
 }
 
+/* Hide default cursor on desktop */
+@media (pointer: fine) {
+  body {
+    cursor: none !important;
+  }
+  a, button, select, input {
+    cursor: none !important;
+  }
+}
+
 .card-minimal {
   @apply bg-white border border-slate-200 rounded-xl shadow-md p-6;
 }
