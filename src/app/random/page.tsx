@@ -185,27 +185,27 @@ export default function RandomPage() {
           <motion.div 
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="space-y-8"
+            className="space-y-8 px-4"
           >
             <div className="flex flex-col items-center space-y-6">
-              <div className="relative">
+              <div className="relative w-full max-w-sm">
                 <div className="absolute inset-0 bg-indigo-500 blur-3xl opacity-20 animate-pulse"></div>
-                <div className="relative bg-white border-4 border-indigo-600 rounded-[3rem] px-16 py-8 shadow-2xl flex flex-col items-center">
-                  <span className="text-[10px] font-black text-indigo-400 uppercase tracking-[0.3em] mb-2">Lucky Number</span>
-                  <div className="text-8xl font-mono font-black text-slate-900 tracking-widest">{result.num}</div>
+                <div className="relative bg-white border-4 border-indigo-600 rounded-[2rem] sm:rounded-[3rem] px-8 sm:px-16 py-6 sm:py-8 shadow-2xl flex flex-col items-center">
+                  <span className="text-[8px] sm:text-[10px] font-black text-indigo-400 uppercase tracking-[0.3em] mb-2">Lucky Number</span>
+                  <div className="text-6xl sm:text-8xl font-mono font-black text-slate-900 tracking-widest">{result.num}</div>
                 </div>
               </div>
 
               {/* Data Backed Insight */}
-              <div className={`card-minimal flex items-center space-x-6 p-6 border-l-8 ${result.stats.length > 0 ? 'border-l-green-500' : 'border-l-slate-200'}`}>
-                <div className={`p-4 rounded-2xl ${result.stats.length > 0 ? 'bg-green-50 text-green-600' : 'bg-slate-50 text-slate-400'}`}>
-                   <TrendingUp className="w-8 h-8" />
+              <div className={`card-minimal w-full max-w-2xl flex flex-col sm:flex-row items-center sm:space-x-6 p-5 sm:p-6 border-l-8 ${result.stats.length > 0 ? 'border-l-green-500' : 'border-l-slate-200'} gap-4 sm:gap-0`}>
+                <div className={`p-4 rounded-2xl ${result.stats.length > 0 ? 'bg-green-50 text-green-600' : 'bg-slate-50 text-slate-400'} flex-shrink-0`}>
+                   <TrendingUp className="w-6 h-6 sm:w-8 sm:h-8" />
                 </div>
-                <div className="space-y-1">
-                  <h4 className="text-xl font-black text-slate-800">
+                <div className="space-y-1 text-center sm:text-left">
+                  <h4 className="text-lg sm:text-xl font-black text-slate-800">
                     {result.stats.length > 0 ? `ว้าว! เลขนี้เคยออกรางวัลมาแล้ว ${result.stats.length} ครั้ง` : 'เลขนี้ยังไม่เคยออกรางวัลเลย (อาจจะมางวดนี้!)'}
                   </h4>
-                  <p className="text-sm text-slate-500 font-medium leading-relaxed">
+                  <p className="text-[11px] sm:text-sm text-slate-500 font-medium leading-relaxed">
                     จากการวิเคราะห์ฐานข้อมูลย้อนหลัง 3 ปี {result.stats.length > 0 ? 'พบว่าเคยปรากฏในหลายรางวัลที่น่าสนใจ' : 'นี่เป็นเลขที่อาจจะเป็นม้ามืดสำหรับคุณ'}
                   </p>
                 </div>
