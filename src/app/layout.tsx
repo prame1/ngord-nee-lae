@@ -35,25 +35,25 @@ export default function RootLayout({
             <div className="flex justify-between h-16 items-center">
               <div className="flex items-center">
                 <Link href="/" className="flex items-center gap-2 group">
-                  <div className="w-8 h-8 relative bg-blue-600 rounded-lg flex items-center justify-center shadow-sm group-hover:scale-110 transition-transform">
+                  <div className="w-8 h-8 relative bg-blue-600 rounded-lg flex items-center justify-center shadow-sm group-hover:scale-110 transition-transform flex-shrink-0">
                     <img src="/favicon.svg" alt="Logo" className="w-6 h-6 invert" />
                   </div>
-                  <span className="text-xl font-black bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
+                  <span className="text-lg sm:text-xl font-black bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent truncate">
                     งวดนี้แหละ
                   </span>
                 </Link>
               </div>
-              <div className="flex space-x-8">
-                <Link href="/" className="text-sm font-medium text-slate-600 hover:text-blue-600 transition-colors">
+              <div className="flex space-x-3 sm:space-x-8 overflow-x-auto no-scrollbar">
+                <Link href="/" className="text-[10px] sm:text-sm font-bold text-slate-600 hover:text-blue-600 transition-colors whitespace-nowrap">
                   หน้าหลัก
                 </Link>
-                <Link href="/search" className="text-sm font-medium text-slate-600 hover:text-blue-600 transition-colors">
+                <Link href="/search" className="text-[10px] sm:text-sm font-bold text-slate-600 hover:text-blue-600 transition-colors whitespace-nowrap">
                   ค้นหาเลข
                 </Link>
-                <Link href="/dream" className="text-sm font-medium text-slate-600 hover:text-blue-600 transition-colors">
+                <Link href="/dream" className="text-[10px] sm:text-sm font-bold text-slate-600 hover:text-blue-600 transition-colors whitespace-nowrap">
                   ทำนายฝัน
                 </Link>
-                <Link href="/archive" className="text-sm font-medium text-slate-600 hover:text-blue-600 transition-colors">
+                <Link href="/archive" className="text-[10px] sm:text-sm font-bold text-slate-600 hover:text-blue-600 transition-colors whitespace-nowrap">
                   สถิติรายปี
                 </Link>
               </div>

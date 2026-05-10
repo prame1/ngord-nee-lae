@@ -55,18 +55,18 @@ export default function HomePage() {
   );
 
   return (
-    <div className="space-y-12 pb-20">
+    <div className="space-y-8 sm:space-y-12 pb-20">
       {/* Hero Section */}
       <motion.section 
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
-        className="text-center space-y-6"
+        className="text-center space-y-4 sm:space-y-6"
       >
         <div className="space-y-2">
-          <h1 className="text-5xl font-extrabold tracking-tight text-slate-900">
-            งวดนี้แหละ <span className="text-blue-600">|</span> <span className="text-slate-400 font-light">Ngord-Nee-Lae</span>
+          <h1 className="text-3xl sm:text-5xl font-extrabold tracking-tight text-slate-900 leading-tight">
+            งวดนี้แหละ <span className="text-blue-600">|</span> <span className="text-slate-400 font-light block sm:inline">Ngord-Nee-Lae</span>
           </h1>
-          <p className="text-xl text-slate-600 font-medium">
+          <p className="text-sm sm:text-xl text-slate-600 font-medium px-4">
             "คู่คิดด้านข้อมูลเชิงสถิติสำหรับเลือกซื้อหวยงวดนี้"
           </p>
         </div>
@@ -77,17 +77,17 @@ export default function HomePage() {
           whileTap={{ scale: 0.99 }}
           className="max-w-4xl mx-auto bg-gradient-to-r from-blue-600 to-indigo-700 rounded-3xl p-1 text-white shadow-xl shadow-blue-100 transition-transform"
         >
-          <Link href="/random" className="flex flex-col md:flex-row items-center justify-between p-6 px-10 gap-6 bg-slate-900/10 rounded-[1.4rem] backdrop-blur-sm relative overflow-hidden group">
-            <div className="flex items-center space-x-6 text-left relative z-10">
-              <div className="p-4 bg-white/20 rounded-2xl group-hover:bg-white/30 transition-colors">
-                <Dices className="w-10 h-10 text-white animate-bounce" />
+          <Link href="/random" className="flex flex-col md:flex-row items-center justify-between p-5 sm:p-6 sm:px-10 gap-4 sm:gap-6 bg-slate-900/10 rounded-[1.4rem] backdrop-blur-sm relative overflow-hidden group text-center md:text-left">
+            <div className="flex flex-col md:flex-row items-center md:space-x-6 gap-3 relative z-10">
+              <div className="p-3 sm:p-4 bg-white/20 rounded-2xl group-hover:bg-white/30 transition-colors">
+                <Dices className="w-8 h-8 sm:w-10 sm:h-10 text-white animate-bounce" />
               </div>
-              <div className="space-y-1">
-                <h2 className="text-2xl font-black text-white">คิดเลขไม่ออก?</h2>
-                <p className="text-blue-100 font-medium">ให้เราช่วยสุ่มเลขมงคลจากราศีและวันเกิดของคุณ</p>
+              <div className="space-y-0.5">
+                <h2 className="text-xl sm:text-2xl font-black text-white">คิดเลขไม่ออก?</h2>
+                <p className="text-[12px] sm:text-base text-blue-100 font-medium">ให้เราช่วยสุ่มเลขมงคลจากราศีและวันเกิดของคุณ</p>
               </div>
             </div>
-            <div className="flex items-center space-x-2 bg-white text-blue-600 px-6 py-3 rounded-2xl font-black text-sm shadow-lg group-hover:bg-blue-50 transition-colors relative z-10">
+            <div className="flex items-center space-x-2 bg-white text-blue-600 px-5 py-2.5 sm:px-6 sm:py-3 rounded-2xl font-black text-xs sm:text-sm shadow-lg group-hover:bg-blue-50 transition-colors relative z-10 whitespace-nowrap">
               <span>เริ่มสุ่มเลขเลย</span>
               <ArrowRight className="w-4 h-4" />
             </div>
@@ -99,40 +99,46 @@ export default function HomePage() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.3 }}
-          className="inline-flex items-center space-x-4 bg-white p-2 rounded-2xl shadow-soft border border-slate-100"
+          className="flex flex-col sm:flex-row items-center gap-4 bg-white p-3 sm:p-2 rounded-2xl shadow-soft border border-slate-100"
         >
-          <div className="flex items-center px-4 space-x-2 text-slate-500 border-r border-slate-100">
+          <div className="flex items-center px-4 space-x-2 text-slate-500 sm:border-r border-slate-100">
             <Filter className="w-4 h-4" />
             <span className="text-xs font-bold uppercase tracking-wider">ช่วงปี (พ.ศ.)</span>
           </div>
-          <div className="flex items-center space-x-2 px-2">
-            <select 
-              value={startYear} 
-              onChange={(e) => setStartYear(Number(e.target.value))}
-              className="bg-slate-50 text-sm font-bold p-2 rounded-lg outline-none focus:ring-2 focus:ring-blue-500"
-            >
-              {YEARS.slice().reverse().map(y => <option key={y} value={y}>{y}</option>)}
-            </select>
-            <span className="text-slate-300 font-bold">ถึง</span>
-            <select 
-              value={endYear} 
-              onChange={(e) => setEndYear(Number(e.target.value))}
-              className="bg-slate-50 text-sm font-bold p-2 rounded-lg outline-none focus:ring-2 focus:ring-blue-500"
-            >
-              {YEARS.map(y => <option key={y} value={y}>{y}</option>)}
-            </select>
+          <div className="flex items-center space-x-4 px-2">
+            <div className="flex items-center space-x-2">
+              <span className="text-[10px] text-slate-400 font-bold">จาก</span>
+              <select 
+                value={startYear} 
+                onChange={(e) => setStartYear(Number(e.target.value))}
+                className="bg-slate-50 text-xs sm:text-sm font-bold p-2 rounded-lg outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer"
+              >
+                {YEARS.slice().reverse().map(y => <option key={y} value={y}>{y}</option>)}
+              </select>
+            </div>
+            <span className="text-slate-300 font-bold">-</span>
+            <div className="flex items-center space-x-2">
+              <span className="text-[10px] text-slate-400 font-bold">ถึง</span>
+              <select 
+                value={endYear} 
+                onChange={(e) => setEndYear(Number(e.target.value))}
+                className="bg-slate-50 text-xs sm:text-sm font-bold p-2 rounded-lg outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer"
+              >
+                {YEARS.map(y => <option key={y} value={y}>{y}</option>)}
+              </select>
+            </div>
           </div>
         </motion.div>
       </motion.section>
 
       {loading ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+        <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-8">
           {[...Array(8)].map((_, i) => (
-            <div key={i} className="card-minimal h-96 animate-pulse bg-slate-100/50"></div>
+            <div key={i} className="card-minimal h-64 sm:h-96 animate-pulse bg-slate-100/50 rounded-2xl"></div>
           ))}
         </div>
       ) : data && (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+        <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-8">
           <PrizeColumn title="รางวัลที่ 1" icon={Trophy} items={data.prize1} colorClass="text-yellow-600" delay={0.1} />
           <PrizeColumn title="เลขท้าย 2 ตัว" icon={Hash} items={data.back2} colorClass="text-blue-600" delay={0.15} />
           <PrizeColumn title="เลขหน้า 3 ตัว" icon={Zap} items={data.front3} colorClass="text-emerald-600" delay={0.2} />
