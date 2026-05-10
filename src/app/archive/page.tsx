@@ -4,12 +4,13 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { fetchYearlyArchive } from '@/app/actions';
 import { Draw } from '@/lib/lotto';
 import { parseThaiDate } from '@/lib/utils';
-import { Calendar, ChevronRight } from 'lucide-react';
+import { Calendar, ChevronRight, Target } from 'lucide-react';
 
 const YEARS = ['2569', '2568', '2567', '2566'];
 
 export default function ArchivePage() {
-  const [selectedYear, setSelectedYear] = useState('2568');
+  const [selectedYear, setSelectedYear] = useState('2569');
+  const [heatmapMode, setHeatmapMode] = useState<'all' | 'two' | 'three'>('two');
   const [draws, setDraws] = useState<Draw[]>([]);
   const [loading, setLoading] = useState(false);
 
@@ -25,44 +26,67 @@ export default function ArchivePage() {
     loadData();
   }, [selectedYear]);
 
-  // Heatmap Data: Frequency of each digit (0-9) in 1st Prize and Last 2 for that year
+  // Heatmap Data: Frequency of each digit (0-9) filtered by mode
   const digitHeatmap = useMemo(() => {
     const counts = Array(10).fill(0);
     draws.forEach(draw => {
-      const p1 = draw.prizes.find(p => p.id === 'prizeFirst')?.number[0] || '';
-      const b2 = draw.runningNumbers?.find(p => p.id === 'runningNumberBackTwo')?.number[0] || '';
-      [...p1, ...b2].forEach(d => {
-        const num = parseInt(d);
-        if (!isNaN(num)) counts[num]++;
+      let numbersToCount: string[] = [];
+      
+      if (heatmapMode === 'all') {
+        const mainPrizes = draw.prizes.flatMap(p => p.number);
+        const runningNums = draw.runningNumbers?.flatMap(p => p.number) || [];
+        numbersToCount = [...mainPrizes, ...runningNums];
+      } else if (heatmapMode === 'two') {
+        numbersToCount = draw.runningNumbers?.find(p => p.id === 'runningNumberBackTwo')?.number || [];
+      } else if (heatmapMode === 'three') {
+        const front = draw.runningNumbers?.find(p => p.id === 'runningNumberFrontThree')?.number || [];
+        const back = draw.runningNumbers?.find(p => p.id === 'runningNumberBackThree')?.number || [];
+        numbersToCount = [...front, ...back];
+      }
+      
+      numbersToCount.forEach(numStr => {
+        [...numStr].forEach(char => {
+          const digit = parseInt(char);
+          if (!isNaN(digit)) counts[digit]++;
+        });
       });
     });
-    const max = Math.max(...counts, 1);
-    return counts.map((count, digit) => ({ digit, count, intensity: count / max }));
-  }, [draws]);
+
+    const max = Math.max(...counts);
+    const min = Math.min(...counts.filter(c => c > 0)) || 0;
+    
+    return counts.map((count, digit) => {
+      const range = max - min;
+      const intensity = range > 0 ? (count - min) / range : (count > 0 ? 1 : 0);
+      return { digit, count, intensity };
+    });
+  }, [draws, heatmapMode]);
 
   const getHeatColor = (intensity: number) => {
     if (intensity === 0) return 'bg-slate-50 text-slate-300';
-    if (intensity < 0.3) return 'bg-blue-100 text-blue-600';
-    if (intensity < 0.6) return 'bg-blue-300 text-white';
-    if (intensity < 0.8) return 'bg-blue-500 text-white shadow-sm';
-    return 'bg-blue-700 text-white shadow-md ring-2 ring-blue-400 ring-offset-2';
+    if (intensity < 0.15) return 'bg-indigo-50 text-indigo-400';
+    if (intensity < 0.3) return 'bg-indigo-200 text-indigo-800';
+    if (intensity < 0.5) return 'bg-indigo-400 text-white';
+    if (intensity < 0.7) return 'bg-indigo-600 text-white';
+    if (intensity < 0.9) return 'bg-indigo-800 text-white shadow-sm';
+    return 'bg-slate-900 text-white shadow-xl ring-2 ring-indigo-500 ring-offset-1';
   };
 
   return (
     <div className="space-y-10 max-w-6xl mx-auto">
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
-        <div className="space-y-2">
-          <h1 className="text-4xl font-extrabold text-slate-900 tracking-tight">สถิติรายปี</h1>
-          <p className="text-slate-500 font-medium text-lg">เจาะลึกทุกเลขรางวัลย้อนหลัง พร้อมวิเคราะห์ความถี่ประจำปี</p>
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 px-4">
+        <div className="space-y-2 text-center md:text-left">
+          <h1 className="text-4xl font-extrabold text-slate-900 tracking-tight leading-tight">สถิติรายปี</h1>
+          <p className="text-slate-500 font-medium text-lg italic">"เจาะลึกทุกรางวัล สแกนทุกตัวเลขที่เคยออกจริง"</p>
         </div>
 
         {/* Year Tabs */}
-        <div className="flex space-x-1 p-1.5 bg-slate-200/50 backdrop-blur rounded-2xl w-fit border border-slate-200">
+        <div className="flex space-x-1 p-1.5 bg-slate-200/50 backdrop-blur rounded-2xl w-fit mx-auto md:mx-0 border border-slate-200">
           {YEARS.map((year) => (
             <button
               key={year}
               onClick={() => setSelectedYear(year)}
-              className={`px-8 py-2.5 text-sm font-bold rounded-xl transition-all duration-300 ${
+              className={`px-6 sm:px-8 py-2.5 text-sm font-bold rounded-xl transition-all duration-300 ${
                 selectedYear === year
                   ? 'bg-white text-blue-600 shadow-card scale-[1.02]'
                   : 'text-slate-500 hover:text-slate-700 hover:bg-white/50'
@@ -75,38 +99,67 @@ export default function ArchivePage() {
       </div>
 
       {!loading && draws.length > 0 && (
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 animate-in fade-in slide-in-from-top-4 duration-700">
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 animate-in fade-in slide-in-from-top-4 duration-700 px-4">
           {/* Heatmap Section */}
           <div className="lg:col-span-1 space-y-6">
-            <div className="card-minimal space-y-6 sticky top-24 border-t-4 border-t-blue-600">
-              <div className="space-y-1">
-                <h3 className="text-lg font-bold text-slate-900">Digit Heatmap</h3>
-                <p className="text-xs text-slate-500">ความถี่ของตัวเลข (0-9) ที่ปรากฏในปีนี้</p>
+            <div className="card-minimal space-y-6 sticky top-24 border-t-4 border-t-indigo-500 shadow-xl bg-white/80 backdrop-blur-sm">
+              <div className="space-y-4 text-center">
+                <div className="flex items-center justify-center gap-2">
+                   <Target className="w-5 h-5 text-indigo-600" />
+                   <h3 className="text-lg font-black text-slate-900 uppercase tracking-widest">Digit Heatmap</h3>
+                </div>
+                
+                {/* Heatmap Mode Tabs */}
+                <div className="flex p-1 bg-slate-100 rounded-2xl border border-slate-200">
+                  {(['all', 'two', 'three'] as const).map((m) => (
+                    <button 
+                      key={m}
+                      onClick={() => setHeatmapMode(m)}
+                      className={`flex-1 text-[10px] font-black py-2 rounded-xl transition-all ${heatmapMode === m ? 'bg-white text-indigo-600 shadow-md scale-[1.02]' : 'text-slate-400 hover:text-slate-600'}`}
+                    >
+                      {m === 'all' ? 'รวม' : m === 'two' ? '2 ตัว' : '3 ตัว'}
+                    </button>
+                  ))}
+                </div>
               </div>
-              <div className="grid grid-cols-5 gap-3">
+
+              <div className="grid grid-cols-5 gap-2.5">
                 {digitHeatmap.map((item) => (
                   <div 
                     key={item.digit}
-                    className={`aspect-square flex flex-col items-center justify-center rounded-xl transition-all duration-300 hover:scale-110 cursor-help group relative overflow-hidden ${getHeatColor(item.intensity)}`}
+                    className={`aspect-square flex flex-col items-center justify-center rounded-xl transition-all duration-300 hover:scale-110 cursor-help group relative ${getHeatColor(item.intensity)}`}
                   >
-                    <span className="text-xl font-black group-hover:opacity-20 transition-opacity">{item.digit}</span>
-                    <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300 translate-y-2 group-hover:translate-y-0">
-                      <span className="text-sm font-black bg-white/20 backdrop-blur-sm px-2 py-1 rounded-lg">
-                        {item.count}
-                      </span>
+                    <span className="text-xl font-black">{item.digit}</span>
+                    
+                    {/* Floating Tooltip */}
+                    <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-3 opacity-0 group-hover:opacity-100 pointer-events-none transition-all duration-300 translate-y-1 group-hover:translate-y-0 z-50">
+                      <div className="bg-slate-900 text-white px-3 py-2.5 rounded-2xl shadow-2xl border border-slate-700 min-w-[100px] text-center relative">
+                        <div className="text-sm font-black leading-none mb-1">
+                          {item.count.toLocaleString()}
+                        </div>
+                        <div className="text-[8px] font-bold text-slate-400 uppercase tracking-widest">ครั้งในปี {selectedYear}</div>
+                        {/* Tooltip Arrow */}
+                        <div className="absolute top-full left-1/2 -translate-x-1/2 w-0 h-0 border-l-[6px] border-l-transparent border-r-[6px] border-r-transparent border-t-[6px] border-t-slate-900"></div>
+                      </div>
                     </div>
                   </div>
                 ))}
               </div>
-              <div className="pt-4 border-t border-slate-100 flex justify-between items-center text-[10px] font-bold text-slate-400 uppercase tracking-widest">
+
+              <div className="pt-4 border-t border-slate-100 flex justify-between items-center text-[10px] font-black text-slate-400 uppercase tracking-widest">
                 <span>น้อย</span>
-                <div className="flex gap-1">
-                  <div className="w-3 h-3 bg-blue-100 rounded-sm"></div>
-                  <div className="w-3 h-3 bg-blue-300 rounded-sm"></div>
-                  <div className="w-3 h-3 bg-blue-500 rounded-sm"></div>
-                  <div className="w-3 h-3 bg-blue-700 rounded-sm"></div>
+                <div className="flex gap-1 px-2 flex-1 justify-center">
+                  {[0, 0.1, 0.25, 0.45, 0.65, 0.85, 1.0].map(i => (
+                    <div key={i} className={`h-2.5 flex-1 rounded-full ${getHeatColor(i)}`}></div>
+                  ))}
                 </div>
                 <span>มาก</span>
+              </div>
+              
+              <div className="p-4 bg-indigo-50/50 rounded-2xl border border-indigo-100/50">
+                <p className="text-[11px] text-indigo-700 leading-relaxed font-bold">
+                  <span className="font-black underline uppercase">Insight:</span> {heatmapMode === 'two' ? 'เน้นเลขโดดที่ออกในเลขท้าย 2 ตัว' : heatmapMode === 'three' ? 'เน้นเลขโดดที่ออกในเลข 3 ตัว' : 'ภาพรวมเลขโดดจากทุกรางวัล'}
+                </p>
               </div>
             </div>
           </div>
@@ -120,30 +173,30 @@ export default function ArchivePage() {
               const b3 = draw.runningNumbers?.find(p => p.id === 'runningNumberBackThree')?.number?.join(' ') || '--- ---';
 
               return (
-                <div key={idx} className="card-minimal group hover:border-blue-300 transition-all duration-300 p-0 overflow-hidden shadow-soft hover:shadow-card">
-                  <div className="bg-slate-50 px-6 py-3 border-b border-slate-100 flex justify-between items-center group-hover:bg-blue-50/50 transition-colors">
+                <div key={idx} className="card-minimal group hover:border-blue-400 transition-all duration-300 p-0 overflow-hidden shadow-soft hover:shadow-card bg-white">
+                  <div className="bg-slate-50 px-8 py-4 border-b border-slate-100 flex justify-between items-center group-hover:bg-blue-50/50 transition-colors">
                     <div className="flex items-center space-x-3 text-blue-600">
-                      <Calendar className="w-4 h-4" />
-                      <span className="text-sm font-black tracking-tight">{draw.date}</span>
+                      <Calendar className="w-5 h-5" />
+                      <span className="text-base font-black tracking-tight">{draw.date}</span>
                     </div>
                   </div>
 
-                  <div className="p-6 grid grid-cols-2 md:grid-cols-4 gap-6 items-center">
+                  <div className="p-8 grid grid-cols-2 md:grid-cols-4 gap-8 items-center text-center md:text-left">
                     <div className="space-y-1">
                       <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">รางวัลที่ 1</span>
-                      <div className="text-2xl font-mono font-black text-slate-800 tracking-tighter">{p1}</div>
+                      <div className="text-3xl font-mono font-black text-slate-800 tracking-tighter">{p1}</div>
                     </div>
-                    <div className="space-y-1 border-l border-slate-100 pl-6">
+                    <div className="space-y-1 border-l border-slate-100 pl-8">
                       <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">เลขท้าย 2 ตัว</span>
-                      <div className="text-2xl font-mono font-black text-blue-600 tracking-tighter">{b2}</div>
+                      <div className="text-3xl font-mono font-black text-blue-600 tracking-tighter">{b2}</div>
                     </div>
-                    <div className="space-y-1 border-l border-slate-100 pl-6 hidden md:block">
+                    <div className="space-y-1 border-l border-slate-100 pl-8 hidden md:block text-left">
                       <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">เลขหน้า 3 ตัว</span>
-                      <div className="text-sm font-mono font-bold text-slate-600">{f3}</div>
+                      <div className="text-lg font-mono font-bold text-slate-600 tracking-wider">{f3}</div>
                     </div>
-                    <div className="space-y-1 border-l border-slate-100 pl-6 hidden md:block">
+                    <div className="space-y-1 border-l border-slate-100 pl-8 hidden md:block text-left">
                       <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">เลขท้าย 3 ตัว</span>
-                      <div className="text-sm font-mono font-bold text-slate-600">{b3}</div>
+                      <div className="text-lg font-mono font-bold text-slate-600 tracking-wider">{b3}</div>
                     </div>
                   </div>
                 </div>
@@ -154,12 +207,12 @@ export default function ArchivePage() {
       )}
 
       {loading && (
-        <div className="flex flex-col items-center justify-center py-32 space-y-6">
+        <div className="flex flex-col items-center justify-center py-40 space-y-6">
           <div className="relative">
-            <div className="h-16 w-16 border-4 border-slate-100 rounded-full"></div>
-            <div className="absolute top-0 h-16 w-16 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
+            <div className="h-20 w-20 border-4 border-slate-100 rounded-full"></div>
+            <div className="absolute top-0 h-20 w-20 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
           </div>
-          <p className="text-slate-400 font-bold uppercase tracking-[0.2em] animate-pulse">Loading Archive...</p>
+          <p className="text-slate-400 font-bold uppercase tracking-[0.3em] animate-pulse">Scanning Archive...</p>
         </div>
       )}
     </div>

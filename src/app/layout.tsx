@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
 import { Inter, JetBrains_Mono } from "next/font/google";
-import Link from "next/link";
 import "./globals.css";
 import AnimatedBackground from "@/components/AnimatedBackground";
 import CustomCursor from "@/components/CustomCursor";
+import Navbar from "@/components/Navbar";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -35,36 +35,7 @@ export default function RootLayout({
         <CustomCursor />
         
         {/* Navigation Bar */}
-        <nav className="sticky top-0 z-50 w-full bg-white/80 backdrop-blur-md border-b border-slate-200">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="flex justify-between h-16 items-center">
-              <div className="flex items-center">
-                <Link href="/" className="flex items-center gap-2 group">
-                  <div className="w-8 h-8 relative bg-blue-600 rounded-lg flex items-center justify-center shadow-sm group-hover:scale-110 transition-transform flex-shrink-0">
-                    <img src="/favicon.svg" alt="Logo" className="w-6 h-6 invert" />
-                  </div>
-                  <span className="text-lg sm:text-xl font-black bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent truncate">
-                    งวดนี้แหละ
-                  </span>
-                </Link>
-              </div>
-              <div className="flex space-x-3 sm:space-x-8 overflow-x-auto no-scrollbar">
-                <Link href="/" className="text-[10px] sm:text-sm font-bold text-slate-600 hover:text-blue-600 transition-colors whitespace-nowrap">
-                  หน้าหลัก
-                </Link>
-                <Link href="/search" className="text-[10px] sm:text-sm font-bold text-slate-600 hover:text-blue-600 transition-colors whitespace-nowrap">
-                  ค้นหาเลข
-                </Link>
-                <Link href="/dream" className="text-[10px] sm:text-sm font-bold text-slate-600 hover:text-blue-600 transition-colors whitespace-nowrap">
-                  ทำนายฝัน
-                </Link>
-                <Link href="/archive" className="text-[10px] sm:text-sm font-bold text-slate-600 hover:text-blue-600 transition-colors whitespace-nowrap">
-                  สถิติรายปี
-                </Link>
-              </div>
-            </div>
-          </div>
-        </nav>
+        <Navbar />
 
         {/* Main Content Area */}
         <main className="flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">

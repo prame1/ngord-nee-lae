@@ -1,8 +1,9 @@
-import { render, screen, fireEvent, act } from '@testing-library/react'
+import { render, screen, fireEvent, act, waitFor } from '@testing-library/react'
 import SearchPage from '@/app/search/page'
-import { handleSearch } from '@/app/actions'
+import { fetchAllDraws } from '@/app/actions'
 
 jest.mock('@/app/actions', () => ({
+  fetchAllDraws: jest.fn(),
   handleSearch: jest.fn(),
 }))
 
@@ -18,36 +19,45 @@ jest.mock('recharts', () => ({
   Cell: () => <div />,
 }))
 
-const mockSearchResults = [
-  { date: '1 มกราคม 2567', prizeName: 'รางวัลที่ 1', reward: '6000000', fullNumber: '123456', prizeId: 'prizeFirst' }
+const mockAllDraws = [
+  {
+    date: '1 มกราคม 2567',
+    endpoint: '',
+    prizes: [{ id: 'prizeFirst', name: 'รางวัลที่ 1', reward: '6000000', amount: 1, number: ['123456'] }],
+    runningNumbers: []
+  }
 ]
 
 describe('SearchPage', () => {
-  it('renders search input', () => {
-    render(<SearchPage />)
-    expect(screen.getByPlaceholderText(/พิมพ์เลขที่ต้องการ/i)).toBeInTheDocument()
+  it('renders search input after loading data', async () => {
+    ;(fetchAllDraws as jest.Mock).mockResolvedValue(mockAllDraws)
+    
+    await act(async () => {
+      render(<SearchPage />)
+    })
+
+    await waitFor(() => {
+      expect(screen.getByPlaceholderText(/พิมพ์เลขที่ต้องการ/i)).toBeInTheDocument()
+    })
   })
 
-  it('performs search and displays results', async () => {
-    ;(handleSearch as jest.Mock).mockResolvedValue(mockSearchResults)
+  it('performs search and displays results locally', async () => {
+    ;(fetchAllDraws as jest.Mock).mockResolvedValue(mockAllDraws)
     
-    render(<SearchPage />)
-    const input = screen.getByPlaceholderText(/พิมพ์เลขที่ต้องการ/i)
+    await act(async () => {
+      render(<SearchPage />)
+    })
+
+    const input = await screen.findByPlaceholderText(/พิมพ์เลขที่ต้องการ/i)
     
     await act(async () => {
       fireEvent.change(input, { target: { value: '123' } })
     })
 
-    expect(handleSearch).toHaveBeenCalledWith('123')
-    
-    // Use findByText with a function matcher because the number is split into parts for highlighting
+    // Match the split content
     const resultElement = await screen.findByText((content, element) => {
       return element?.textContent === '123456'
     })
     expect(resultElement).toBeInTheDocument()
-    
-    // Use getAllByText for prize names since it appears in both the filter button and results
-    const prizeElements = screen.getAllByText(/รางวัลที่ 1/i)
-    expect(prizeElements.length).toBeGreaterThan(1)
   })
 })

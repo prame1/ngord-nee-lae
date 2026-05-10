@@ -88,6 +88,11 @@ export function searchNumberInDraws(query: string, draws: Draw[]): SearchResult[
   return results;
 }
 
+export function getLatestDraw(): Draw | null {
+  const all = getAllDraws();
+  return all.length > 0 ? all[0] : null;
+}
+
 export interface NumberFrequency {
   number: string;
   count: number;

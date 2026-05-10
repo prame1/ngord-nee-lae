@@ -1,8 +1,8 @@
 'use client'
 
-import React, { useState, useMemo } from 'react';
-import { handleSearch } from '@/app/actions';
-import { SearchResult } from '@/lib/lotto';
+import React, { useState, useMemo, useEffect } from 'react';
+import { fetchAllDraws } from '@/app/actions';
+import { SearchResult, Draw } from '@/lib/lotto';
 import { parseThaiDate } from '@/lib/utils';
 import { Search as SearchIcon, TrendingUp, Calendar, Tag, CheckSquare, Square } from 'lucide-react';
 import { 
@@ -25,21 +25,18 @@ const PRIZE_GROUPS = [
 
 export default function SearchPage() {
   const [query, setQuery] = useState('');
-  const [allResults, setAllResults] = useState<SearchResult[]>([]);
+  const [allDraws, setAllDraws] = useState<Draw[]>([]);
   const [selectedGroups, setSelectedGroups] = useState<string[]>(['p1', 'b2', 't3', 'other']);
-  const [isSearching, setIsSearching] = useState(false);
+  const [isLoadingData, setIsLoadingData] = useState(true);
 
-  const onSearchChange = async (val: string) => {
-    setQuery(val);
-    if (val.length < 1) {
-      setAllResults([]);
-      return;
-    }
-    setIsSearching(true);
-    const res = await handleSearch(val);
-    setAllResults(res);
-    setIsSearching(false);
-  };
+  useEffect(() => {
+    const load = async () => {
+      const data = await fetchAllDraws();
+      setAllDraws(data);
+      setIsLoadingData(false);
+    };
+    load();
+  }, []);
 
   const toggleGroup = (id: string) => {
     setSelectedGroups(prev => 
@@ -47,16 +44,53 @@ export default function SearchPage() {
     );
   };
 
-  // Filter and Sort results
+  // Instant local search logic
   const filteredResults = useMemo(() => {
+    if (!query || allDraws.length === 0) return [];
+    
     const allowedIds = PRIZE_GROUPS
       .filter(g => selectedGroups.includes(g.id))
       .flatMap(g => g.ids);
 
-    return allResults
-      .filter(r => allowedIds.includes(r.prizeId))
-      .sort((a, b) => parseThaiDate(b.date) - parseThaiDate(a.date));
-  }, [allResults, selectedGroups]);
+    const results: SearchResult[] = [];
+
+    for (const draw of allDraws) {
+      // Check main prizes
+      for (const prize of draw.prizes) {
+        if (!allowedIds.includes(prize.id)) continue;
+        for (const num of prize.number) {
+          if (num.includes(query)) {
+            results.push({
+              date: draw.date,
+              prizeName: prize.name,
+              reward: prize.reward,
+              fullNumber: num,
+              prizeId: prize.id
+            });
+          }
+        }
+      }
+      // Check running numbers
+      if (draw.runningNumbers) {
+        for (const prize of draw.runningNumbers) {
+          if (!allowedIds.includes(prize.id)) continue;
+          for (const num of prize.number) {
+            if (num.includes(query)) {
+              results.push({
+                date: draw.date,
+                prizeName: prize.name,
+                reward: prize.reward,
+                fullNumber: num,
+                prizeId: prize.id
+              });
+            }
+          }
+        }
+      }
+    }
+
+    return results.sort((a, b) => parseThaiDate(b.date) - parseThaiDate(a.date));
+  }, [allDraws, query, selectedGroups]);
 
   // Data for visualization: Frequency by Year
   const chartData = useMemo(() => {
@@ -71,6 +105,13 @@ export default function SearchPage() {
   }, [filteredResults]);
 
   const COLORS = ['#2563eb', '#4f46e5', '#7c3aed', '#db2777', '#dc2626'];
+
+  if (isLoadingData) return (
+    <div className="flex flex-col items-center justify-center py-40 space-y-4">
+      <div className="animate-spin h-12 w-12 border-4 border-blue-600 border-t-transparent rounded-full"></div>
+      <p className="text-slate-400 font-bold uppercase tracking-widest text-xs">กำลังโหลดฐานข้อมูลสถิติ...</p>
+    </div>
+  );
 
   return (
     <div className="space-y-8 max-w-5xl mx-auto">
@@ -90,15 +131,10 @@ export default function SearchPage() {
             <input
               type="text"
               value={query}
-              onChange={(e) => onSearchChange(e.target.value.replace(/[^0-9]/g, ''))}
+              onChange={(e) => setQuery(e.target.value.replace(/[^0-9]/g, ''))}
               placeholder="พิมพ์เลขที่ต้องการ (เช่น 12, 456)..."
               className="block w-full pl-11 pr-4 py-4 bg-white border border-slate-200 rounded-2xl shadow-soft focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all text-lg font-medium"
             />
-            {isSearching && (
-              <div className="absolute inset-y-0 right-0 pr-4 flex items-center">
-                <div className="animate-spin h-5 w-5 border-2 border-blue-600 border-t-transparent rounded-full"></div>
-              </div>
-            )}
           </div>
 
           {/* Filters */}
@@ -209,7 +245,7 @@ export default function SearchPage() {
         </div>
       )}
 
-      {query.length > 0 && filteredResults.length === 0 && !isSearching && (
+      {query.length > 0 && filteredResults.length === 0 && !isLoadingData && (
         <div className="text-center py-20 card-minimal border-dashed bg-slate-50/50">
           <div className="text-slate-300 mb-2">
             <SearchIcon className="w-12 h-12 mx-auto" />
