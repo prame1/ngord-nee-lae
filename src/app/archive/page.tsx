@@ -13,6 +13,7 @@ export default function ArchivePage() {
   const [heatmapMode, setHeatmapMode] = useState<'all' | 'two' | 'three'>('two');
   const [draws, setDraws] = useState<Draw[]>([]);
   const [loading, setLoading] = useState(false);
+  const [activeDigit, setActiveDigit] = useState<{digit: number, count: number} | null>(null);
 
   useEffect(() => {
     const loadData = async () => {
@@ -22,6 +23,7 @@ export default function ArchivePage() {
       const sortedData = [...data].sort((a, b) => parseThaiDate(b.date) - parseThaiDate(a.date)); 
       setDraws(sortedData);
       setLoading(false);
+      setActiveDigit(null);
     };
     loadData();
   }, [selectedYear]);
@@ -123,28 +125,50 @@ export default function ArchivePage() {
                 </div>
               </div>
 
-              <div className="grid grid-cols-5 gap-2.5">
+              <div className="grid grid-cols-5 gap-2.5 relative">
                 {digitHeatmap.map((item) => (
-                  <div 
+                  <button 
                     key={item.digit}
-                    className={`aspect-square flex flex-col items-center justify-center rounded-xl transition-all duration-300 hover:scale-110 cursor-help group relative ${getHeatColor(item.intensity)}`}
+                    onClick={() => setActiveDigit(activeDigit?.digit === item.digit ? null : { digit: item.digit, count: item.count })}
+                    className={`aspect-square flex flex-col items-center justify-center rounded-xl transition-all duration-300 hover:scale-110 group relative ${getHeatColor(item.intensity)} ${activeDigit?.digit === item.digit ? 'ring-4 ring-indigo-500 scale-110 z-20' : ''}`}
                   >
                     <span className="text-xl font-black">{item.digit}</span>
                     
-                    {/* Floating Tooltip */}
-                    <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-3 opacity-0 group-hover:opacity-100 pointer-events-none transition-all duration-300 translate-y-1 group-hover:translate-y-0 z-50">
+                    {/* Desktop Hover Tooltip */}
+                    <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-3 opacity-0 lg:group-hover:opacity-100 pointer-events-none transition-all duration-300 translate-y-1 lg:group-hover:translate-y-0 z-50 hidden lg:block">
                       <div className="bg-slate-900 text-white px-3 py-2.5 rounded-2xl shadow-2xl border border-slate-700 min-w-[100px] text-center relative">
                         <div className="text-sm font-black leading-none mb-1">
                           {item.count.toLocaleString()}
                         </div>
                         <div className="text-[8px] font-bold text-slate-400 uppercase tracking-widest">ครั้งในปี {selectedYear}</div>
-                        {/* Tooltip Arrow */}
                         <div className="absolute top-full left-1/2 -translate-x-1/2 w-0 h-0 border-l-[6px] border-l-transparent border-r-[6px] border-r-transparent border-t-[6px] border-t-slate-900"></div>
                       </div>
                     </div>
-                  </div>
+                  </button>
                 ))}
               </div>
+
+              {/* Mobile Active Display */}
+              {activeDigit && (
+                <div className="lg:hidden p-4 bg-slate-900 text-white rounded-2xl shadow-2xl animate-in zoom-in-95 duration-200">
+                  <div className="flex justify-between items-center">
+                    <div className="flex items-center space-x-3">
+                      <div className="text-3xl font-black text-indigo-400">{activeDigit.digit}</div>
+                      <div className="h-8 w-[1px] bg-slate-700"></div>
+                      <div>
+                        <div className="text-lg font-black">{activeDigit.count.toLocaleString()} ครั้ง</div>
+                        <div className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">สถิติในปี {selectedYear}</div>
+                      </div>
+                    </div>
+                    <button 
+                      onClick={() => setActiveDigit(null)}
+                      className="p-2 hover:bg-slate-800 rounded-full text-slate-500 font-bold text-xs uppercase"
+                    >
+                      ปิด
+                    </button>
+                  </div>
+                </div>
+              )}
 
               <div className="pt-4 border-t border-slate-100 flex justify-between items-center text-[10px] font-black text-slate-400 uppercase tracking-widest">
                 <span>น้อย</span>
@@ -174,21 +198,21 @@ export default function ArchivePage() {
 
               return (
                 <div key={idx} className="card-minimal group hover:border-blue-400 transition-all duration-300 p-0 overflow-hidden shadow-soft hover:shadow-card bg-white">
-                  <div className="bg-slate-50 px-8 py-4 border-b border-slate-100 flex justify-between items-center group-hover:bg-blue-50/50 transition-colors">
-                    <div className="flex items-center space-x-3 text-blue-600">
-                      <Calendar className="w-5 h-5" />
-                      <span className="text-base font-black tracking-tight">{draw.date}</span>
+                  <div className="bg-slate-50 px-4 sm:px-8 py-3 sm:py-4 border-b border-slate-100 flex justify-between items-center group-hover:bg-blue-50/50 transition-colors">
+                    <div className="flex items-center space-x-2 sm:space-x-3 text-blue-600">
+                      <Calendar className="w-4 h-4 sm:w-5 h-5" />
+                      <span className="text-sm sm:text-base font-black tracking-tight">{draw.date}</span>
                     </div>
                   </div>
 
-                  <div className="p-8 grid grid-cols-2 md:grid-cols-4 gap-8 items-center text-center md:text-left">
+                  <div className="p-4 sm:p-8 grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-8 items-center text-center md:text-left">
                     <div className="space-y-1">
-                      <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">รางวัลที่ 1</span>
-                      <div className="text-3xl font-mono font-black text-slate-800 tracking-tighter">{p1}</div>
+                      <span className="text-[9px] sm:text-[10px] font-black text-slate-400 uppercase tracking-widest">รางวัลที่ 1</span>
+                      <div className="text-2xl sm:text-3xl font-mono font-black text-slate-800 tracking-tighter">{p1}</div>
                     </div>
-                    <div className="space-y-1 border-l border-slate-100 pl-8">
-                      <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">เลขท้าย 2 ตัว</span>
-                      <div className="text-3xl font-mono font-black text-blue-600 tracking-tighter">{b2}</div>
+                    <div className="space-y-1 border-l border-slate-100 pl-4 sm:pl-8">
+                      <span className="text-[9px] sm:text-[10px] font-black text-slate-400 uppercase tracking-widest">เลขท้าย 2 ตัว</span>
+                      <div className="text-2xl sm:text-3xl font-mono font-black text-blue-600 tracking-tighter">{b2}</div>
                     </div>
                     <div className="space-y-1 border-l border-slate-100 pl-8 hidden md:block text-left">
                       <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">เลขหน้า 3 ตัว</span>

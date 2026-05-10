@@ -66,11 +66,11 @@ export default function HomePage() {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay, duration: 0.5 }}
-        className="card-minimal space-y-4 flex flex-col h-full hover:shadow-card transition-all border-t-4 border-t-transparent hover:border-t-current group"
+        className="card-minimal !p-4 sm:!p-6 space-y-4 flex flex-col h-full hover:shadow-card transition-all border-t-4 border-t-transparent hover:border-t-current group"
       >
         <div className={`flex items-center space-x-3 ${colorClass}`}>
           <Icon className="w-5 h-5 group-hover:scale-110 transition-transform" />
-          <h2 className="text-lg font-black">{title}</h2>
+          <h2 className="text-base sm:text-lg font-black">{title}</h2>
         </div>
         <div className="flex-1 space-y-2">
           {items.length > 0 ? items.map((item, idx) => {
@@ -84,14 +84,14 @@ export default function HomePage() {
                           colorClass.includes('pink') ? 'bg-pink-400' : 'bg-orange-400';
 
             return (
-              <div key={idx} className="relative flex justify-between items-center p-2.5 rounded-lg overflow-hidden group/item border border-slate-50 hover:border-slate-200 transition-all">
+              <div key={idx} className="relative flex justify-between items-center p-2 rounded-lg overflow-hidden group/item border border-slate-50 hover:border-slate-200 transition-all">
                 <div 
                   className={`absolute left-0 top-0 bottom-0 opacity-10 transition-all duration-1000 ease-out ${bgClass}`}
                   style={{ width: `${widthPct}%` }}
                 />
-                <div className="flex items-center space-x-3 relative z-10">
-                  <span className="text-[10px] font-black text-slate-300 w-4">{idx + 1}.</span>
-                  <span className="font-mono text-base font-black text-slate-700">{item.number}</span>
+                <div className="flex items-center space-x-2 relative z-10">
+                  <span className="text-[10px] font-black text-slate-300 w-3">{idx + 1}.</span>
+                  <span className="font-mono text-sm sm:text-base font-black text-slate-700">{item.number}</span>
                 </div>
                 <div className="flex items-center space-x-1 relative z-10">
                   <span className="text-[10px] font-black text-slate-900">{item.count}</span>
@@ -113,13 +113,13 @@ export default function HomePage() {
       <motion.section 
         initial={{ opacity: 0, scale: 0.98 }}
         animate={{ opacity: 1, scale: 1 }}
-        className="text-center space-y-6"
+        className="text-center space-y-6 pt-4 sm:pt-0"
       >
-        <div className="space-y-2">
-          <h1 className="text-4xl sm:text-6xl font-black tracking-tight text-slate-900 leading-tight text-shadow-sm">
+        <div className="space-y-3">
+          <h1 className="text-3xl sm:text-6xl font-black tracking-tight text-slate-900 leading-tight text-shadow-sm">
             งวดนี้แหละ <span className="text-blue-600">|</span> <span className="text-slate-400 font-light block sm:inline">Ngord-Nee-Lae</span>
           </h1>
-          <p className="text-sm sm:text-xl text-slate-600 font-medium px-4 opacity-80">
+          <p className="text-xs sm:text-xl text-slate-600 font-medium px-4 opacity-80">
             "คู่คิดด้านข้อมูลเชิงสถิติสำหรับเลือกซื้อหวยงวดนี้"
           </p>
         </div>
@@ -128,21 +128,21 @@ export default function HomePage() {
         <motion.div 
           whileHover={{ scale: 1.01 }}
           whileTap={{ scale: 0.99 }}
-          className="max-w-5xl mx-auto bg-gradient-to-r from-orange-500 to-amber-600 rounded-[2.5rem] p-1.5 text-white shadow-2xl shadow-orange-200 transition-transform"
+          className="max-w-5xl mx-auto bg-gradient-to-r from-orange-500 to-amber-600 rounded-[2rem] sm:rounded-[2.5rem] p-1 text-white shadow-2xl shadow-orange-200 transition-transform"
         >
-          <Link href="/random" className="flex flex-col md:flex-row items-center justify-between p-6 sm:p-8 sm:px-12 gap-6 bg-slate-900/10 rounded-[2.2rem] backdrop-blur-md relative overflow-hidden group">
+          <Link href="/random" className="flex flex-col md:flex-row items-center justify-between p-5 sm:p-8 sm:px-12 gap-6 bg-slate-900/10 rounded-[1.8rem] sm:rounded-[2.2rem] backdrop-blur-md relative overflow-hidden group">
             <div className="flex flex-col md:flex-row items-center md:space-x-8 gap-4 relative z-10">
-              <div className="p-4 sm:p-5 bg-white/20 rounded-3xl group-hover:bg-white/30 transition-colors shadow-inner">
-                <Sparkles className="w-10 h-10 sm:w-12 sm:h-12 text-white animate-pulse" />
+              <div className="p-3 sm:p-5 bg-white/20 rounded-2xl sm:rounded-3xl group-hover:bg-white/30 transition-colors shadow-inner">
+                <Sparkles className="w-8 h-8 sm:w-12 sm:h-12 text-white animate-pulse" />
               </div>
               <div className="space-y-1 text-center md:text-left">
-                <h2 className="text-2xl sm:text-3xl font-black text-white">ตั้งจิตอธิษฐาน</h2>
-                <p className="text-xs sm:text-lg text-orange-100 font-medium opacity-90">เขย่าเซียมซีรับเลขนำโชคเฉพาะคุณ</p>
+                <h2 className="text-xl sm:text-3xl font-black text-white">ตั้งจิตอธิษฐาน</h2>
+                <p className="text-[10px] sm:text-lg text-orange-100 font-medium opacity-90">เขย่าเซียมซีรับเลขนำโชคเฉพาะคุณ</p>
               </div>
             </div>
-            <div className="flex items-center space-x-3 bg-white text-orange-600 px-8 py-4 rounded-2xl font-black text-sm sm:text-base shadow-xl group-hover:bg-orange-50 transition-all relative z-10 whitespace-nowrap active:scale-95">
+            <div className="flex items-center space-x-3 bg-white text-orange-600 px-6 sm:px-8 py-3 sm:py-4 rounded-xl sm:rounded-2xl font-black text-xs sm:text-base shadow-xl group-hover:bg-orange-50 transition-all relative z-10 whitespace-nowrap active:scale-95">
               <span>เขย่าเลย</span>
-              <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+              <ArrowRight className="w-4 h-4 sm:w-5 h-5 group-hover:translate-x-1 transition-transform" />
             </div>
           </Link>
         </motion.div>
@@ -154,11 +154,11 @@ export default function HomePage() {
           <div className="space-y-8 py-4">
             <div className="flex flex-col items-center space-y-3">
               <div className="flex items-center space-x-3 text-orange-600">
-                <Hand className="w-6 h-6 animate-bounce" />
-                <h2 className="text-2xl font-black uppercase tracking-tight">เลขมงคลประจำงวด</h2>
+                <Hand className="w-5 h-5 sm:w-6 sm:h-6 animate-bounce" />
+                <h2 className="text-xl sm:text-2xl font-black uppercase tracking-tight">เลขมงคลประจำงวด</h2>
               </div>
-              <div className="max-w-2xl bg-white border border-orange-100 p-4 rounded-2xl shadow-sm">
-                <p className="text-[12px] sm:text-sm text-slate-500 font-medium text-center leading-relaxed">
+              <div className="max-w-2xl bg-white border border-orange-100 p-4 rounded-2xl shadow-sm mx-2">
+                <p className="text-[11px] sm:text-sm text-slate-500 font-medium text-center leading-relaxed">
                   "เลขชุดนี้เกิดจากการตั้งจิตอธิษฐานและสุ่มหลังจาก <span className="text-orange-600 font-bold underline">เจ้าของเว็บได้ไปไหว้พระขอพรมา</span> 
                   โดยเลขจะคงอยู่ตลอดงวดและเปลี่ยนใหม่ทันทีเมื่อผลรางวัลรอบถัดไปออก"
                 </p>
@@ -167,19 +167,19 @@ export default function HomePage() {
 
             <motion.section 
               initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
-              className="grid grid-cols-1 md:grid-cols-3 gap-8"
+              className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8"
             >
               {spiritualPicks.map((pick, i) => (
-                <div key={i} className={`card-minimal border-2 ${pick.border} ${pick.bg} flex flex-col items-center justify-center p-10 space-y-4 shadow-2xl hover:scale-105 transition-transform group relative overflow-hidden ring-4 ring-white`}>
+                <div key={i} className={`card-minimal border-2 ${pick.border} ${pick.bg} flex flex-col items-center justify-center p-8 sm:p-10 space-y-3 sm:space-y-4 shadow-2xl hover:scale-105 transition-transform group relative overflow-hidden ring-4 ring-white`}>
                    <div className="absolute top-[-20px] right-[-20px] p-8 opacity-5 group-hover:opacity-20 transition-opacity">
-                      <Sparkles className="w-20 h-20 text-orange-400" />
+                      <Sparkles className="w-16 h-16 sm:w-20 sm:h-20 text-orange-400" />
                    </div>
-                   <span className={`text-[10px] font-black uppercase tracking-[0.3em] ${pick.color}`}>{pick.label}</span>
-                   <div className="text-7xl font-mono font-black text-slate-900 tracking-tighter drop-shadow-sm">{pick.number}</div>
-                   <div className="flex items-center gap-1.5 text-[9px] font-bold text-slate-400 uppercase tracking-widest border-t border-slate-100 pt-3 mt-2 w-full justify-center">
-                      <Star className="w-2.5 h-2.5 text-amber-400 fill-amber-400" />
+                   <span className={`text-[9px] sm:text-[10px] font-black uppercase tracking-[0.3em] ${pick.color}`}>{pick.label}</span>
+                   <div className="text-5xl sm:text-7xl font-mono font-black text-slate-900 tracking-tighter drop-shadow-sm">{pick.number}</div>
+                   <div className="flex items-center gap-1.5 text-[8px] sm:text-[9px] font-bold text-slate-400 uppercase tracking-widest border-t border-slate-100 pt-3 mt-2 w-full justify-center">
+                      <Star className="w-2 h-2 sm:w-2.5 sm:h-2.5 text-amber-400 fill-amber-400" />
                       Calculated by Faith
-                      <Star className="w-2.5 h-2.5 text-amber-400 fill-amber-400" />
+                      <Star className="w-2 h-2 sm:w-2.5 sm:h-2.5 text-amber-400 fill-amber-400" />
                    </div>
                 </div>
               ))}
@@ -189,43 +189,43 @@ export default function HomePage() {
       </AnimatePresence>
 
       {/* Advanced Filter & Tab System */}
-      <section className="space-y-8 pt-6">
-        <div className="flex flex-col md:flex-row items-center justify-between gap-6 border-t border-slate-100 pt-10">
+      <section className="space-y-6 sm:space-y-8 pt-6">
+        <div className="flex flex-col lg:flex-row items-center justify-between gap-6 border-t border-slate-100 pt-10">
           {/* Tabs */}
-          <div className="flex p-1 bg-slate-100 rounded-2xl border border-slate-200 w-fit">
+          <div className="flex p-1 bg-slate-100 rounded-2xl border border-slate-200 w-full sm:w-fit overflow-x-auto no-scrollbar">
             <button 
               onClick={() => setActiveTab('major')}
-              className={`flex items-center space-x-2 px-8 py-3 rounded-xl text-sm font-black transition-all ${activeTab === 'major' ? 'bg-white text-blue-600 shadow-md scale-[1.02]' : 'text-slate-400 hover:text-slate-600'}`}
+              className={`flex-1 sm:flex-none flex items-center justify-center space-x-2 px-4 sm:px-8 py-3 rounded-xl text-xs sm:text-sm font-black transition-all ${activeTab === 'major' ? 'bg-white text-blue-600 shadow-md scale-[1.02]' : 'text-slate-400 hover:text-slate-600'}`}
             >
               <Trophy className="w-4 h-4" />
               <span>รางวัลหลัก</span>
             </button>
             <button 
               onClick={() => setActiveTab('others')}
-              className={`flex items-center space-x-2 px-8 py-3 rounded-xl text-sm font-black transition-all ${activeTab === 'others' ? 'bg-white text-blue-600 shadow-md scale-[1.02]' : 'text-slate-400 hover:text-slate-600'}`}
+              className={`flex-1 sm:flex-none flex items-center justify-center space-x-2 px-4 sm:px-8 py-3 rounded-xl text-xs sm:text-sm font-black transition-all ${activeTab === 'others' ? 'bg-white text-blue-600 shadow-md scale-[1.02]' : 'text-slate-400 hover:text-slate-600'}`}
             >
               <LayoutGrid className="w-4 h-4" />
               <span>รางวัลอื่นๆ</span>
             </button>
           </div>
 
-          {/* Year Filter ... unchanged ... */}
-          <div className="flex items-center space-x-4 bg-white p-2 rounded-2xl shadow-soft border border-slate-100">
-            <div className="flex items-center px-4 space-x-2 text-slate-500 border-r border-slate-100">
-              <Filter className="w-4 h-4" />
-              <span className="text-[10px] font-black uppercase tracking-widest">ช่วงปี พ.ศ.</span>
+          {/* Year Filter */}
+          <div className="flex items-center space-x-2 sm:space-x-4 bg-white p-2 rounded-2xl shadow-soft border border-slate-100 w-full sm:w-auto justify-center">
+            <div className="flex items-center px-2 sm:px-4 space-x-2 text-slate-500 border-r border-slate-100">
+              <Filter className="w-3 h-3 sm:w-4 h-4" />
+              <span className="text-[9px] sm:text-[10px] font-black uppercase tracking-widest">พ.ศ.</span>
             </div>
-            <div className="flex items-center space-x-3 px-2">
+            <div className="flex items-center space-x-2 sm:space-x-3 px-2">
               <select 
                 value={startYear} onChange={(e) => setStartYear(Number(e.target.value))}
-                className="bg-slate-50 text-xs font-black p-2 rounded-lg outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer"
+                className="bg-slate-50 text-[10px] sm:text-xs font-black p-1.5 sm:p-2 rounded-lg outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer"
               >
                 {YEARS.slice().reverse().map(y => <option key={y} value={y}>{y}</option>)}
               </select>
               <span className="text-slate-300 font-bold">-</span>
               <select 
                 value={endYear} onChange={(e) => setEndYear(Number(e.target.value))}
-                className="bg-slate-50 text-xs font-black p-2 rounded-lg outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer"
+                className="bg-slate-50 text-[10px] sm:text-xs font-black p-1.5 sm:p-2 rounded-lg outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer"
               >
                 {YEARS.map(y => <option key={y} value={y}>{y}</option>)}
               </select>
@@ -233,9 +233,9 @@ export default function HomePage() {
           </div>
         </div>
 
-        {/* Rankings Grid ... unchanged ... */}
+        {/* Rankings Grid */}
         {loading ? (
-          <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-8">
             {[...Array(4)].map((_, i) => (
               <div key={i} className="card-minimal h-96 animate-pulse bg-slate-100/50 rounded-2xl"></div>
             ))}
@@ -245,7 +245,7 @@ export default function HomePage() {
             key={activeTab}
             initial={{ opacity: 0, x: activeTab === 'major' ? -20 : 20 }}
             animate={{ opacity: 1, x: 0 }}
-            className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-8"
+            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-8"
           >
             {activeTab === 'major' ? (
               <>

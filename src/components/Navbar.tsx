@@ -28,14 +28,14 @@ export default function Navbar() {
               </span>
             </Link>
           </div>
-          <div className="flex space-x-1 sm:space-x-4 overflow-x-auto no-scrollbar ml-4">
+          <div className="flex items-center space-x-1 sm:space-x-4 ml-2 sm:ml-4">
             {NAV_LINKS.map((link) => {
               const isActive = pathname === link.href;
               return (
                 <Link
                   key={link.href}
                   href={link.href}
-                  className={`px-3 py-2 rounded-xl text-[10px] sm:text-sm font-bold transition-all whitespace-nowrap ${
+                  className={`px-2 sm:px-3 py-2 rounded-xl text-[10px] sm:text-sm font-bold transition-all whitespace-nowrap ${
                     isActive
                       ? 'bg-blue-600 text-white shadow-md shadow-blue-200 scale-105'
                       : 'text-slate-600 hover:text-blue-600 hover:bg-blue-50'
