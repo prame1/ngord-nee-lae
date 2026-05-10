@@ -21,3 +21,4 @@ This file tracks the history of changes and tasks performed by AI agents to main
 | 2026-05-09 | Gemini CLI | Remove Significant Events | ✅ Done | Removed the "เลขวันสำคัญ" feature and consolidated logic based on user feedback to simplify the site. |
 | 2026-05-09 | Gemini CLI | Final UI Polish & Disclaimer | ✅ Done | Enhanced Dream UI with larger numbers, simplified statistical analysis, and added a proper global footer with disclaimers. |
 | 2026-05-10 | Gemini CLI | Animations & Custom Cursor | ✅ Done | Added subtle animated background blobs and a custom interactive cursor for a premium feel. |
+| 2026-05-10 | Gemini CLI | Simplify Navbar | ✅ Done | Removed "เซียมซี" from the Navbar to keep it concise, keeping access via the Home page banner. |

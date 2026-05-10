@@ -9,7 +9,6 @@ const NAV_LINKS = [
   { href: '/search', label: 'ค้นหาเลข' },
   { href: '/dream', label: 'ทำนายฝัน' },
   { href: '/archive', label: 'สถิติรายปี' },
-  { href: '/random', label: 'เซียมซี' },
 ];
 
 export default function Navbar() {
