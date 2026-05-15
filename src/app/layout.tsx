@@ -16,11 +16,26 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "งวดนี้แหละ | Ngord-Nee-Lae",
-  description: "คู่คิดด้านข้อมูลเชิงสถิติสำหรับเลือกซื้อหวยงวดนี้",
+  title: "งวดนี้แหละ | ตรวจหวย เช็คสถิติสลากกินแบ่งรัฐบาล Real-time",
+  description: "ตรวจหวยงวดล่าสุด เช็คผลสลากกินแบ่งรัฐบาลย้อนหลัง 3 ปี วิเคราะห์สถิติเลขออกบ่อย และทำนายฝันเลขเด็ด ครบจบในที่เดียวด้วยระบบอัจฉริยะ",
+  keywords: "ตรวจหวย, สถิติหวย, ผลสลากกินแบ่งรัฐบาล, งวดนี้แหละ, ทำนายฝัน, เลขเด็ด, ตรวจหวยย้อนหลัง, สถิติหวยออกบ่อย",
   icons: {
     icon: "/favicon.svg",
   },
+  openGraph: {
+    title: "งวดนี้แหละ | ตรวจหวยและวิเคราะห์สถิติสลากกินแบ่งรัฐบาล",
+    description: "คู่คิดด้านข้อมูลเชิงสถิติสำหรับเลือกซื้อหวยและตรวจรางวัลแบบ Real-time",
+    url: "https://ngord-nee-lae.vercel.app", // Adjust this if you have a custom domain
+    siteName: "งวดนี้แหละ",
+    locale: "th_TH",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "งวดนี้แหละ | ตรวจหวยและวิเคราะห์สถิติ",
+    description: "ตรวจหวยง่ายๆ ก๊อปวางเลขจากแชทได้ทันที พร้อมสถิติย้อนหลังแบบเจาะลึก",
+  },
+  viewport: "width=device-width, initial-scale=1, maximum-scale=1",
 };
 
 export default function RootLayout({

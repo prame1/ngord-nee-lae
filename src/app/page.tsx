@@ -150,6 +150,25 @@ export default function HomePage() {
 
   return (
     <div className="space-y-10 pb-20 max-w-6xl mx-auto px-4">
+      {/* Structured Data for SEO */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "WebSite",
+            "name": "งวดนี้แหละ",
+            "url": "https://ngord-nee-lae.vercel.app",
+            "description": "ตรวจหวยสลากกินแบ่งรัฐบาลและวิเคราะห์สถิติเลขออกบ่อย",
+            "potentialAction": {
+              "@type": "SearchAction",
+              "target": "https://ngord-nee-lae.vercel.app/search?q={search_term_string}",
+              "query-input": "required name=search_term_string"
+            }
+          })
+        }}
+      />
+
       {/* Hero Section */}
       <motion.section 
         initial={{ opacity: 0, scale: 0.98 }}

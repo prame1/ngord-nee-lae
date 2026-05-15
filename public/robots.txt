@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://ngord-nee-lae.vercel.app/sitemap.xml
