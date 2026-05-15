@@ -2,9 +2,9 @@
 
 import React, { useState, useEffect, useMemo } from 'react';
 import Link from 'next/link';
-import { fetchFrequencyData, fetchLatestDrawData } from '@/app/actions';
-import { RankedFrequencies, NumberFrequency, Draw } from '@/lib/lotto';
-import { Trophy, Hash, Zap, Award, Star, Coins, Ticket, Flame, Filter, Sparkles, ArrowRight, TrendingUp, LayoutGrid, Hand } from 'lucide-react';
+import { fetchFrequencyData, fetchLatestDrawData, fetchAllDraws, checkLotteryNumbers } from '@/app/actions';
+import { RankedFrequencies, NumberFrequency, Draw, SearchResult } from '@/lib/lotto';
+import { Trophy, Hash, Zap, Award, Star, Coins, Ticket, Flame, Filter, Sparkles, ArrowRight, TrendingUp, LayoutGrid, Hand, Calendar, ClipboardPaste, CheckCircle2, XCircle, AlertCircle, RefreshCcw } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const YEARS = [2569, 2568, 2567, 2566];
@@ -12,24 +12,65 @@ const YEARS = [2569, 2568, 2567, 2566];
 export default function HomePage() {
   const [data, setData] = useState<RankedFrequencies | null>(null);
   const [latestDraw, setLatestDraw] = useState<Draw | null>(null);
+  const [allDrawDates, setAllDrawDates] = useState<string[]>([]);
   const [startYear, setStartYear] = useState(2567);
   const [endYear, setEndYear] = useState(2569);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<'major' | 'others'>('major');
 
+  // Lotto Checker State
+  const [rawInput, setRawInput] = useState('');
+  const [selectedDrawDate, setSelectedDrawDate] = useState('');
+  const [checkResults, setCheckResults] = useState<{ number: string, prizes: SearchResult[] }[] | null>(null);
+  const [isChecking, setIsChecking] = useState(false);
+
   useEffect(() => {
     const load = async () => {
       setLoading(true);
-      const [freq, latest] = await Promise.all([
+      const [freq, latest, allDraws] = await Promise.all([
         fetchFrequencyData(startYear, endYear),
-        fetchLatestDrawData()
+        fetchLatestDrawData(),
+        fetchAllDraws()
       ]);
       setData(freq);
       setLatestDraw(latest);
+      const dates = allDraws.map(d => d.date);
+      setAllDrawDates(dates);
+      if (latest) setSelectedDrawDate(latest.date);
       setLoading(false);
     };
     load();
   }, [startYear, endYear]);
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    // Allow only digits and whitespace/newlines
+    const val = e.target.value.replace(/[^\d\s,]/g, '');
+    setRawInput(val);
+  };
+
+  const extractNumbers = (text: string) => {
+    // Strictly extract only 6-digit numbers
+    const matches = text.match(/\b\d{6}\b/g) || [];
+    return matches;
+  };
+
+  const handleCheck = async () => {
+    const numbers = extractNumbers(rawInput);
+    if (numbers.length === 0) return;
+    
+    setIsChecking(true);
+    const results = await checkLotteryNumbers(numbers, selectedDrawDate);
+    setCheckResults(results);
+    setIsChecking(false);
+  };
+
+  const totalWon = useMemo(() => {
+    if (!checkResults) return 0;
+    return checkResults.reduce((sum, res) => {
+      const prizeSum = res.prizes.reduce((pSum, p) => pSum + parseInt(p.reward), 0);
+      return sum + prizeSum;
+    }, 0);
+  }, [checkResults]);
 
   // Seeded Random Logic: Only changes when the latest draw date changes
   const spiritualPicks = useMemo(() => {
@@ -147,6 +188,177 @@ export default function HomePage() {
           </Link>
         </motion.div>
       </motion.section>
+
+      {/* Smart Lotto Checker Section */}
+      <section className="max-w-4xl mx-auto space-y-6">
+        <div className="card-minimal p-6 sm:p-10 space-y-8 bg-white/80 backdrop-blur-xl border-blue-100 shadow-2xl relative overflow-hidden">
+          <div className="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-500"></div>
+          
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
+            <div className="space-y-2 flex-1">
+              <div className="flex items-center space-x-2 text-blue-600">
+                <ClipboardPaste className="w-5 h-5" />
+                <h2 className="text-xl sm:text-2xl font-black">ตรวจผลรางวัล</h2>
+              </div>
+              <p className="text-xs sm:text-sm text-slate-500 font-medium">กรอกเลขให้ครบ <span className="text-blue-600 font-bold">6 หลัก</span> (เว้นวรรคด้วย Spacebar เพื่อตรวจหลายใบพร้อมกัน)</p>
+              <textarea 
+                value={rawInput}
+                onChange={(e) => {
+                  // Strictly allow only digits and spaces
+                  const val = e.target.value.replace(/[^\d\s]/g, '');
+                  setRawInput(val);
+                }}
+                placeholder="ตัวอย่าง: 123456 987654 000111"
+                className="w-full h-32 p-4 rounded-2xl bg-slate-50 border-2 border-slate-100 focus:border-blue-500 focus:bg-white outline-none transition-all font-mono text-lg resize-none shadow-inner"
+              />
+            </div>
+
+            <div className="space-y-4 w-full md:w-64">
+              <div className="space-y-2">
+                <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-1.5">
+                  <Calendar className="w-3 h-3" /> เลือกงวดที่จะตรวจ
+                </label>
+                <select 
+                  value={selectedDrawDate}
+                  onChange={(e) => setSelectedDrawDate(e.target.value)}
+                  className="w-full p-3.5 rounded-xl bg-slate-100 border-none font-black text-sm cursor-pointer hover:bg-slate-200 transition-colors"
+                >
+                  {allDrawDates.map(date => (
+                    <option key={date} value={date}>{date}</option>
+                  ))}
+                </select>
+              </div>
+              
+              <button 
+                onClick={handleCheck}
+                disabled={isChecking || !rawInput.trim()}
+                className="w-full bg-blue-600 hover:bg-blue-700 disabled:opacity-50 text-white font-black py-4 rounded-2xl shadow-lg shadow-blue-200 transition-all flex items-center justify-center space-x-2 active:scale-95"
+              >
+                {isChecking ? (
+                  <RefreshCcw className="w-5 h-5 animate-spin" />
+                ) : (
+                  <>
+                    <CheckCircle2 className="w-5 h-5" />
+                    <span>ตรวจรางวัลทันที</span>
+                  </>
+                )}
+              </button>
+            </div>
+          </div>
+
+          {/* Results Area */}
+          <AnimatePresence>
+            {checkResults && (
+              <motion.div 
+                initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
+                className="pt-6 border-t border-slate-100 space-y-6"
+              >
+                <div className="flex items-center justify-between">
+                  <h3 className="text-lg font-black text-slate-800">สรุปผลการตรวจ</h3>
+                  <div className={`px-4 py-2 rounded-full font-black text-sm ${totalWon > 0 ? 'bg-green-100 text-green-600 animate-bounce' : 'bg-slate-100 text-slate-400'}`}>
+                    {totalWon > 0 ? `ยินดีด้วย! คุณได้รับเงินรางวัล ${totalWon.toLocaleString()} บาท` : 'ไม่ถูกรางวัลในงวดนี้'}
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  {checkResults.map((res, i) => (
+                    <div key={i} className={`p-4 rounded-xl border-2 flex items-center justify-between ${res.prizes.length > 0 ? 'border-green-200 bg-green-50/50' : 'border-slate-50 bg-slate-50/30'}`}>
+                      <div className="flex items-center space-x-4">
+                        <div className="text-2xl font-mono font-black text-slate-900 tracking-tighter">{res.number}</div>
+                        {res.prizes.length > 0 ? (
+                          <div className="space-y-0.5">
+                            {res.prizes.map((p, pi) => (
+                              <div key={pi} className="text-[10px] font-black text-green-600 uppercase">{p.prizeName}</div>
+                            ))}
+                          </div>
+                        ) : (
+                          <div className="text-[10px] font-bold text-slate-300 uppercase">ไม่ถูกรางวัล</div>
+                        )}
+                      </div>
+                      {res.prizes.length > 0 ? (
+                        <CheckCircle2 className="w-6 h-6 text-green-500 fill-green-50" />
+                      ) : (
+                        <XCircle className="w-6 h-6 text-slate-200" />
+                      )}
+                    </div>
+                  ))}
+                </div>
+                
+                <button 
+                  onClick={() => setCheckResults(null)}
+                  className="text-xs font-bold text-slate-400 hover:text-slate-600 transition-colors mx-auto block"
+                >
+                  ล้างผลการตรวจ
+                </button>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
+      </section>
+
+      {/* Latest Results Section */}
+      <AnimatePresence>
+        {!loading && latestDraw && (
+          <motion.section 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="space-y-6"
+          >
+            <div className="flex flex-col items-center space-y-4">
+              <div className="flex items-center space-x-2 text-slate-400">
+                <Calendar className="w-4 h-4" />
+                <span className="text-xs font-black uppercase tracking-widest">งวดล่าสุด: {latestDraw.date}</span>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6">
+              {/* Prize 1 */}
+              <div className="card-minimal bg-slate-900 text-white border-none p-6 sm:p-8 flex flex-col items-center justify-center space-y-2 group relative overflow-hidden">
+                <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:scale-110 transition-transform">
+                  <Trophy className="w-12 h-12 text-yellow-400" />
+                </div>
+                <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">รางวัลที่ 1</span>
+                <div className="text-4xl sm:text-5xl font-mono font-black tracking-tighter text-yellow-400">
+                  {latestDraw.prizes.find(p => p.id === 'prizeFirst')?.number[0] || '------'}
+                </div>
+              </div>
+
+              {/* Back 2 */}
+              <div className="card-minimal bg-white border-slate-200 p-6 sm:p-8 flex flex-col items-center justify-center space-y-2 group relative overflow-hidden">
+                <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:scale-110 transition-transform text-blue-600">
+                  <Hash className="w-12 h-12" />
+                </div>
+                <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">เลขท้าย 2 ตัว</span>
+                <div className="text-4xl sm:text-5xl font-mono font-black tracking-tighter text-slate-900">
+                  {latestDraw.runningNumbers?.find(p => p.id === 'runningNumberBackTwo')?.number[0] || '--'}
+                </div>
+              </div>
+
+              {/* 3 Digits (Front & Back) */}
+              <div className="card-minimal bg-white border-slate-200 p-6 sm:p-8 flex flex-col items-center justify-center space-y-4 group relative overflow-hidden">
+                <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:scale-110 transition-transform text-emerald-600">
+                  <Zap className="w-12 h-12" />
+                </div>
+                <div className="flex w-full justify-around gap-4">
+                  <div className="flex flex-col items-center space-y-1">
+                    <span className="text-[9px] font-black text-slate-500 uppercase tracking-widest">เลขหน้า 3 ตัว</span>
+                    <div className="text-2xl sm:text-3xl font-mono font-black text-slate-900">
+                      {latestDraw.runningNumbers?.find(p => p.id === 'runningNumberFrontThree')?.number.join(' ') || '--- ---'}
+                    </div>
+                  </div>
+                  <div className="w-px h-12 bg-slate-100"></div>
+                  <div className="flex flex-col items-center space-y-1">
+                    <span className="text-[9px] font-black text-slate-500 uppercase tracking-widest">เลขท้าย 3 ตัว</span>
+                    <div className="text-2xl sm:text-3xl font-mono font-black text-slate-900">
+                      {latestDraw.runningNumbers?.find(p => p.id === 'runningNumberBackThree')?.number.join(' ') || '--- ---'}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </motion.section>
+        )}
+      </AnimatePresence>
 
       {/* The Spiritual Focal Point: Owner's Picks */}
       <AnimatePresence>

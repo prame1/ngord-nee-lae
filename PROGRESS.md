@@ -21,4 +21,5 @@ This file tracks the history of changes and tasks performed by AI agents to main
 | 2026-05-09 | Gemini CLI | Remove Significant Events | ✅ Done | Removed the "เลขวันสำคัญ" feature and consolidated logic based on user feedback to simplify the site. |
 | 2026-05-09 | Gemini CLI | Final UI Polish & Disclaimer | ✅ Done | Enhanced Dream UI with larger numbers, simplified statistical analysis, and added a proper global footer with disclaimers. |
 | 2026-05-10 | Gemini CLI | Animations & Custom Cursor | ✅ Done | Added subtle animated background blobs and a custom interactive cursor for a premium feel. |
-| 2026-05-10 | Gemini CLI | Simplify Navbar | ✅ Done | Removed "เซียมซี" from the Navbar to keep it concise, keeping access via the Home page banner. |
+| 2026-05-14 | Gemini CLI | Integrate Real-time Lotto Checker | ✅ Done | Added homepage multi-number checker with 6-digit enforcement and live API integration (Rayriffy) for real-time results. |
+| 2026-05-14 | Gemini CLI | Fix Esiimsi UX | ✅ Done | Refactored Esiimsi results to display in-place without scrolling. |

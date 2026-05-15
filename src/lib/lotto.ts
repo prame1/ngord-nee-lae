@@ -53,32 +53,54 @@ export function searchNumberInDraws(query: string, draws: Draw[], allowedPrizeId
   const results: SearchResult[] = [];
 
   for (const draw of draws) {
-    // Check main prizes
-    for (const prize of draw.prizes) {
-      if (allowedPrizeIds && !allowedPrizeIds.includes(prize.id)) continue;
-      for (const num of prize.number) {
-        if (num.includes(query)) {
-          results.push({
-            date: draw.date,
-            prizeName: prize.name,
-            reward: prize.reward,
-            fullNumber: num,
-            prizeId: prize.id
-          });
-        }
-      }
-    }
-    // Check running numbers (2-digit, 3-digit suffixes)
-    if (draw.runningNumbers) {
-      for (const prize of draw.runningNumbers) {
+    // 1. Check main prizes (Requires exact 6-digit match)
+    if (query.length === 6) {
+      for (const prize of draw.prizes) {
         if (allowedPrizeIds && !allowedPrizeIds.includes(prize.id)) continue;
         for (const num of prize.number) {
-          if (num.includes(query)) {
+          if (num === query) {
             results.push({
               date: draw.date,
               prizeName: prize.name,
               reward: prize.reward,
               fullNumber: num,
+              prizeId: prize.id
+            });
+          }
+        }
+      }
+    }
+
+    // 2. Check running numbers (2-digit, 3-digit)
+    if (draw.runningNumbers) {
+      for (const prize of draw.runningNumbers) {
+        if (allowedPrizeIds && !allowedPrizeIds.includes(prize.id)) continue;
+        
+        const isFrontThree = prize.id === 'runningNumberFrontThree';
+        const isBackThree = prize.id === 'runningNumberBackThree';
+        const isBackTwo = prize.id === 'runningNumberBackTwo';
+
+        for (const prizeNum of prize.number) {
+          let isWin = false;
+
+          if (query.length === 6) {
+            // If user types 6 digits, check if the relevant part matches
+            if (isFrontThree && query.startsWith(prizeNum)) isWin = true;
+            if (isBackThree && query.endsWith(prizeNum)) isWin = true;
+            if (isBackTwo && query.endsWith(prizeNum)) isWin = true;
+          } else {
+            // If user types 2 or 3 digits, check for exact match with the prize type
+            if (isFrontThree && query.length === 3 && query === prizeNum) isWin = true;
+            if (isBackThree && query.length === 3 && query === prizeNum) isWin = true;
+            if (isBackTwo && query.length === 2 && query === prizeNum) isWin = true;
+          }
+
+          if (isWin) {
+            results.push({
+              date: draw.date,
+              prizeName: prize.name,
+              reward: prize.reward,
+              fullNumber: prizeNum,
               prizeId: prize.id
             });
           }
@@ -92,7 +114,18 @@ export function searchNumberInDraws(query: string, draws: Draw[], allowedPrizeId
 
 export function getLatestDraw(): Draw | null {
   const all = getAllDraws();
-  return all.length > 0 ? all[0] : null;
+  if (all.length === 0) return null;
+
+  // Filter out placeholder draws (containing 'xxx')
+  const validDraws = all.filter(draw => {
+    const firstPrize = draw.prizes.find(p => p.id === 'prizeFirst');
+    return firstPrize && !firstPrize.number[0].toLowerCase().includes('x');
+  });
+
+  if (validDraws.length === 0) return null;
+
+  // Sort descending by date
+  return validDraws.sort((a, b) => parseThaiDate(b.date) - parseThaiDate(a.date))[0];
 }
 
 export interface NumberFrequency {
