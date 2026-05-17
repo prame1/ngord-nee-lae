@@ -4,6 +4,7 @@ import React, { useState, useEffect, useMemo } from 'react';
 import Link from 'next/link';
 import { fetchFrequencyData, fetchLatestDrawData, fetchAllDraws, checkLotteryNumbers } from '@/app/actions';
 import { RankedFrequencies, NumberFrequency, Draw, SearchResult } from '@/lib/lotto';
+import { parseThaiDate } from '@/lib/utils';
 import { Trophy, Hash, Zap, Award, Star, Coins, Ticket, Flame, Filter, Sparkles, ArrowRight, TrendingUp, LayoutGrid, Hand, Calendar, ClipboardPaste, CheckCircle2, XCircle, AlertCircle, RefreshCcw } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -34,8 +35,19 @@ export default function HomePage() {
       ]);
       setData(freq);
       setLatestDraw(latest);
-      const dates = allDraws.map(d => d.date);
-      setAllDrawDates(dates);
+
+      // Combine allDraws with latest to ensure the dropdown has the current draw
+      const combinedDraws = [...allDraws];
+      if (latest && !combinedDraws.find(d => d.date === latest.date)) {
+        combinedDraws.unshift(latest);
+      }
+      
+      // Final sort to be absolutely sure (latest to oldest)
+      const sortedDates = combinedDraws
+        .sort((a, b) => parseThaiDate(b.date) - parseThaiDate(a.date))
+        .map(d => d.date);
+
+      setAllDrawDates(sortedDates);
       if (latest) setSelectedDrawDate(latest.date);
       setLoading(false);
     };

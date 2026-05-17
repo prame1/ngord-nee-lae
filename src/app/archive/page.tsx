@@ -19,9 +19,7 @@ export default function ArchivePage() {
     const loadData = async () => {
       setLoading(true);
       const data = await fetchYearlyArchive(selectedYear);
-      // Sort descending (latest first) using robust date parsing
-      const sortedData = [...data].sort((a, b) => parseThaiDate(b.date) - parseThaiDate(a.date)); 
-      setDraws(sortedData);
+      setDraws(data);
       setLoading(false);
       setActiveDigit(null);
     };

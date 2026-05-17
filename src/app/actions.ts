@@ -2,6 +2,7 @@
 
 import { getAllDraws, getTopFrequentNumbers, searchNumberInDraws, getDrawsByYear, getLatestDraw, SearchResult, Draw, RankedFrequencies } from '@/lib/lotto';
 import { getPopularDreams, DreamArticle } from '@/lib/beliefs';
+import { parseThaiDate } from '@/lib/utils';
 
 export async function handleSearch(number: string, allowedPrizeIds?: string[]): Promise<SearchResult[]> {
   const allDraws = getAllDraws();
@@ -38,11 +39,13 @@ export async function fetchLatestDrawData(): Promise<Draw | null> {
 }
 
 export async function fetchYearlyArchive(year: string): Promise<Draw[]> {
-  return getDrawsByYear(year);
+  const data = getDrawsByYear(year);
+  return [...data].sort((a, b) => parseThaiDate(b.date) - parseThaiDate(a.date));
 }
 
 export async function fetchAllDraws(): Promise<Draw[]> {
-  return getAllDraws();
+  const data = getAllDraws();
+  return [...data].sort((a, b) => parseThaiDate(b.date) - parseThaiDate(a.date));
 }
 
 export async function checkLotteryNumbers(numbers: string[], drawDate: string): Promise<{ number: string, prizes: SearchResult[] }[]> {
