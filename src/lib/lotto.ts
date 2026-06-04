@@ -13,6 +13,7 @@ export interface Prize {
 export interface Draw {
   date: string;
   endpoint: string;
+  id: string;
   prizes: Prize[];
   runningNumbers?: Prize[];
 }
