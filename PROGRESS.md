@@ -23,3 +23,4 @@ This file tracks the history of changes and tasks performed by AI agents to main
 | 2026-05-10 | Gemini CLI | Animations & Custom Cursor | ✅ Done | Added subtle animated background blobs and a custom interactive cursor for a premium feel. |
 | 2026-05-14 | Gemini CLI | Integrate Real-time Lotto Checker | ✅ Done | Added homepage multi-number checker with 6-digit enforcement and live API integration (Rayriffy) for real-time results. |
 | 2026-05-14 | Gemini CLI | Fix Esiimsi UX | ✅ Done | Refactored Esiimsi results to display in-place without scrolling. |
+| 2026-06-04 | Gemini CLI | Switch to GLO API & Update Data | ✅ Done | Fixed issue where June 1st draw was missing due to Rayriffy API being archived. Switched to Official GLO API and manually synced June 1st data. |
